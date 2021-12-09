@@ -14,7 +14,7 @@ jobs:
           name: Run script
           command: python src/app.py
       - run: mkdir code
-      - run: cp . code
+      - run: cp -R ./* code
       - persist_to_workspace:
           root: code
           paths:
