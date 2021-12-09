@@ -1,1 +1,3 @@
-assert 1==1
+def test_placeholder():
+    print('inside placeholder testcase')
+    assert True
