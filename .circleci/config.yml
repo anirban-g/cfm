@@ -13,10 +13,10 @@ jobs:
       - run:
           name: Run script
           command: python src/app.py
-      - run: mkdir code
-      - run: cp -R ./* code
+      - run: mkdir project_code
+      - run: cp -R ./* project_code
       - persist_to_workspace:
-          root: code
+          root: project_code
           paths:
               - '*'
   api-test:
@@ -60,7 +60,7 @@ jobs:
     steps:
       - run: echo Deploy build
 workflows:
-  version: 3
+  version: 2
   build-test-deploy:
     jobs:
       - api-build
