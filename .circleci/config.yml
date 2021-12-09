@@ -87,7 +87,7 @@ workflows:
             - api-test
             - backend-test
           filters:
-            branch:
+            branches:
               ignore:
                 - main
       - deploy:
