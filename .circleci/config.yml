@@ -13,12 +13,20 @@ jobs:
       - run:
           name: Run script
           command: python src/app.py
+      - run: mkdir code
+      - run: cp . code
+      - persist_to_workspace:
+          root: code
+          paths:
+              - '*'
   api-test:
     docker:
       - image: cimg/python:3.10
     working_directory: ~/cfm
     steps:
-      - checkout
+      # - checkout
+      - attach_to_workspace:
+          at: ~/repo/workspace
       - python/install-packages:
           pkg-manager: pip
       - run:
@@ -50,7 +58,7 @@ jobs:
     docker:
       - image: cimg/python:3.10
     steps:
-      - run: echo 'Deploy build'
+      - run: echo Deploy build
 workflows:
   version: 3
   build-test-deploy:
