@@ -13,20 +13,20 @@ jobs:
       - run:
           name: Run script
           command: python src/app.py
-      - run: mkdir project_code
-      - run: cp -R ./* project_code
-      - persist_to_workspace:
-          root: project_code
-          paths:
-              - '*'
+      # - run: mkdir project_code
+      # - run: cp -R ./* project_code
+      # - persist_to_workspace:
+      #     root: project_code
+      #     paths:
+      #         - '*'
   api-test:
     docker:
       - image: cimg/python:3.10
     working_directory: ~/cfm
     steps:
-      # - checkout
-      - attach_workspace:
-          at: ~/repo/workspace
+      - checkout
+      # - attach_workspace:
+      #     at: ~/repo/workspace
       - python/install-packages:
           pkg-manager: pip
       - run:
@@ -59,6 +59,17 @@ jobs:
       - image: cimg/python:3.10
     steps:
       - run: echo Deploy build
+  dev-test:
+    docker:
+      - image: cimg/python:3.10
+    working_directory: ~/cfm
+    steps:
+      - checkout
+      - python/install-packages:
+          pkg-manager: pip
+      - run:
+          name: Run tests
+          command: pytest
 workflows:
   version: 2
   build-test-deploy:
@@ -71,7 +82,19 @@ workflows:
       - backend-test:
           requires:
             - backend-build
+      - dev-test:
+          requires:
+            - api-test
+            - backend-test
+          filters:
+            branch:
+              ignore:
+                - main
       - deploy:
           requires:
             - api-test
             - backend-test
+          filters:
+            branches:
+              only:
+                - main
