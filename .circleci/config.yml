@@ -25,7 +25,7 @@ jobs:
     working_directory: ~/cfm
     steps:
       # - checkout
-      - attach_to_workspace:
+      - attach_workspace:
           at: ~/repo/workspace
       - python/install-packages:
           pkg-manager: pip
