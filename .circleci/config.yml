@@ -2,7 +2,7 @@ version: 2.1
 orbs:
   python: circleci/python@1.5.0
 jobs:
-  build:
+  api-build:
     docker:
       - image: cimg/python:3.10
     working_directory: ~/cfm
@@ -13,7 +13,29 @@ jobs:
       - run:
           name: Run script
           command: python src/app.py
-  test:
+  api-test:
+    docker:
+      - image: cimg/python:3.10
+    working_directory: ~/cfm
+    steps:
+      - checkout
+      - python/install-packages:
+          pkg-manager: pip
+      - run:
+          name: Run tests
+          command: pytest
+  backend-build:
+    docker:
+      - image: cimg/python:3.10
+    working_directory: ~/cfm
+    steps:
+      - checkout
+      - python/install-packages:
+          pkg-manager: pip
+      - run:
+          name: Run script
+          command: python src/app.py
+  backend-test:
     docker:
       - image: cimg/python:3.10
     working_directory: ~/cfm
@@ -33,17 +55,15 @@ workflows:
   version: 2
   build-test-deploy:
     jobs:
-      - build
-      - test
-      - deploy
-# workflows:
-#   version: 2
-#   build-test-deploy:
-#     jobs:
-#       - build
-#       - test:
-#           requires:
-#             - build
-#       - deploy:
-#           requires:
-#             - test
+      - api-build
+      - api-test:
+          requires:
+            - api-build
+      - backend-build
+      - backend-test:
+          requires:
+            - backend-build
+      - deploy:
+          requires:
+            - api-test
+            - backend-test
