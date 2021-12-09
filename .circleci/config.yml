@@ -52,7 +52,7 @@ jobs:
     steps:
       - run: echo 'Deploy build'
 workflows:
-  version: 2
+  version: 3
   build-test-deploy:
     jobs:
       - api-build
