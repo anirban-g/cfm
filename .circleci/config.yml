@@ -5,18 +5,20 @@ jobs:
   build:
     docker:
       - image: cimg/python:3.10
-    working_directory: ~/cfm
+    working_directory: ~/cfm/src
     steps:
       - checkout
       - python/install-packages:
           pkg-manager: pip
       - run:
           name: Run script
-          command: python src/app.py
+          command: python app.py
   test:
     docker:
       - image: cimg/python:3.10
     steps:
+      - python/install-packages:
+          pkg-manager: pip
       - run:
           name: Run tests
           command: pytest
