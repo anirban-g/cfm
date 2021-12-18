@@ -1,4 +1,5 @@
 import logging
+from time import sleep
 
 if __name__ == '__main__':
 
@@ -8,5 +9,7 @@ if __name__ == '__main__':
     log.info('CFM Orchestrator started')
 
     print('Welcome to Compressed File Manager(CFM). Start Orchestrator...')
+    log.info(f'Going to sleep for 5 minutes...')
+    sleep(300.0)
 
     log.info('CFM Orchestrator stopped')
