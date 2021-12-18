@@ -4,4 +4,4 @@ USER bot
 COPY . /orchestrator
 WORKDIR /orchestrator
 RUN pip install -r requirements.txt
-CMD ["python", "src/app.py"]
+CMD ["python", "src/orchestrator.py"]
