@@ -2,99 +2,33 @@ version: 2.1
 orbs:
   python: circleci/python@1.5.0
 jobs:
-  api-build:
+  build:
+    working_directory: /cfm
     docker:
-      - image: cimg/python:3.10
-    working_directory: ~/cfm
+      - image: docker:17.05.0-ce-git
     steps:
       - checkout
-      - python/install-packages:
-          pkg-manager: pip
+      - setup_remote_docker
       - run:
-          name: Run script
-          command: python src/app.py
-      # - run: mkdir project_code
-      # - run: cp -R ./* project_code
-      # - persist_to_workspace:
-      #     root: project_code
-      #     paths:
-      #         - '*'
-  api-test:
-    docker:
-      - image: cimg/python:3.10
-    working_directory: ~/cfm
-    steps:
-      - checkout
-      # - attach_workspace:
-      #     at: ~/repo/workspace
-      - python/install-packages:
-          pkg-manager: pip
+          name: Install dependencies
+          command: |
+            apk add --no-cache py-pip=9.0.0-r1
+            pip install docker-compose==1.15.0
       - run:
-          name: Run tests
-          command: pytest
-  backend-build:
-    docker:
-      - image: cimg/python:3.10
-    working_directory: ~/cfm
-    steps:
-      - checkout
-      - python/install-packages:
-          pkg-manager: pip
-      - run:
-          name: Run script
-          command: python src/app.py
-  backend-test:
-    docker:
-      - image: cimg/python:3.10
-    working_directory: ~/cfm
-    steps:
-      - checkout
-      - python/install-packages:
-          pkg-manager: pip
-      - run:
-          name: Run tests
-          command: pytest
-  deploy:
-    docker:
-      - image: cimg/python:3.10
-    steps:
-      - run: echo Deploy build
-  dev-test:
-    docker:
-      - image: cimg/python:3.10
-    working_directory: ~/cfm
-    steps:
-      - checkout
-      - python/install-packages:
-          pkg-manager: pip
-      - run:
-          name: Run tests
-          command: pytest
+          name: Run docker compose
+          command: |
+            docker-compose up -d
+            # docker-compose run cfm python backend/worker/app.py
+      - deploy:
+          name: Push application Docker image
+          command: |
+            docker login -e $DOCKER_HUB_EMAIL -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD
+            docker tag cfm_worker $DOCKER_HUB_USER_ID/cfm_worker:$CIRCLE_SHA1
+            docker tag cfm_worker $DOCKER_HUB_USER_ID/cfm_worker:latest
+            docker push $DOCKER_HUB_USER_ID/cfm_worker:$CIRCLE_SHA1
+            docker push $DOCKER_HUB_USER_ID/cfm_worker:latest
 workflows:
   version: 2
-  build-test-deploy:
+  build:
     jobs:
-      - api-build
-      - api-test:
-          requires:
-            - api-build
-      - backend-build
-      - backend-test:
-          requires:
-            - backend-build
-      - dev-test:
-          requires:
-            - api-test
-            - backend-test
-          filters:
-            branches:
-              ignore:
-                - main
-      - deploy:
-          requires:
-            - api-test
-            - backend-test
-          filters:
-            branches:
-              only:
-                - main
+      - build

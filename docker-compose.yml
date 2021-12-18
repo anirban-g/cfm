@@ -1,6 +1,10 @@
 version: "3.0"
 services:
-  cfm:
-    build: .
+  worker:
+    build: ./backend/worker
     ports:
       - "5000:5000"
+  orchestrator:
+    build: ./backend/orchestrator
+    ports:
+      - "5100:5100"
