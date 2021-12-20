@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  aws-ecr: circleci/aws-ecr@6.7.0
+  aws-ecr: circleci/aws-ecr@7.3.0
 workflows:
   build_and_push_image:
     jobs:
@@ -10,6 +10,7 @@ workflows:
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           create-repo: true
           dockerfile: Dockerfile
+          no-output-timeout: 20m
           path: ./backend/worker
           region: AWS_REGION
           repo: circleci-ecr-orb-demo-worker
