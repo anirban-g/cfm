@@ -1,40 +1,16 @@
 version: 2.1
 orbs:
-  python: circleci/python@1.5.0
-jobs:
-  build:
-    working_directory: /cfm
-    docker:
-      - image: docker:17.05.0-ce-git
-    steps:
-      - checkout
-      - setup_remote_docker
-      - run:
-          name: Install dependencies
-          command: |
-            apk add --no-cache py-pip=9.0.0-r1
-            pip install docker-compose==1.15.0
-      - run:
-          name: Run docker compose
-          command: |
-            docker-compose up -d
-            # docker-compose run cfm python backend/worker/app.py
-      - deploy:
-          name: Push application Docker image
-          command: |
-            docker login -e $DOCKER_HUB_EMAIL -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD
-
-            docker tag cfm_orchestrator $DOCKER_HUB_USER_ID/cfm_orchestrator:$CIRCLE_SHA1
-            docker tag cfm_orchestrator $DOCKER_HUB_USER_ID/cfm_orchestrator:latest
-            docker push $DOCKER_HUB_USER_ID/cfm_orchestrator:$CIRCLE_SHA1
-            docker push $DOCKER_HUB_USER_ID/cfm_orchestrator:latest
-
-            docker tag cfm_worker $DOCKER_HUB_USER_ID/cfm_worker:$CIRCLE_SHA1
-            docker tag cfm_worker $DOCKER_HUB_USER_ID/cfm_worker:latest
-            docker push $DOCKER_HUB_USER_ID/cfm_worker:$CIRCLE_SHA1
-            docker push $DOCKER_HUB_USER_ID/cfm_worker:latest
+  aws-ecr: circleci/aws-ecr@6.7.0
 workflows:
-  version: 2
-  build:
+  build_and_push_image:
     jobs:
-      - build
+      - aws-ecr/build-and-push-image:
+          account-url: $AWS_ECR_ACCOUNT_URL # https://284541392707.dkr.ecr.us-east-2.amazonaws.com
+          aws-access-key-id: $AWS_ACCESS_KEY_ID
+          aws-secret-access-key: $AWS_SECRET_ACCESS_KEY
+          create-repo: true
+          dockerfile: Dockerfile
+          path: ./backend/worker
+          region: $AWS_REGION
+          repo: circleci-ecr-orb-demo-worker
+          tag: "$CIRCLE_SHA1"
