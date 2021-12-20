@@ -15,4 +15,4 @@ workflows:
           region: AWS_REGION
           repo: circleci-ecr-orb-demo-worker
           skip-when-tags-exist: false
-          tag: '$CIRCLE_SHA1,latest'
+          tag: 'latest'
