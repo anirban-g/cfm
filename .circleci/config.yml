@@ -14,4 +14,5 @@ workflows:
           path: ./backend/worker
           region: AWS_REGION
           repo: circleci-ecr-orb-demo-worker
-          tag: "$CIRCLE_SHA1"
+          skip-when-tags-exist: false
+          tag: "latest"
