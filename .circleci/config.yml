@@ -11,7 +11,7 @@ workflows:
           create-repo: true
           dockerfile: Dockerfile
           no-output-timeout: 20m
-          path: ./backend/worker
+          path: .
           region: AWS_REGION
           repo: circleci-ecr-orb-demo-worker
           skip-when-tags-exist: false
