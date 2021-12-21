@@ -13,6 +13,5 @@ workflows:
           no-output-timeout: 20m
           path: .
           region: AWS_REGION
-          repo: circleci-ecr-orb-demo-worker
-          skip-when-tags-exist: false
+          repo: circleci-ecr-orb-demo-orchestrator
           tag: "$CIRCLE_SHA1"
