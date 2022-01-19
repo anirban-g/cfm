@@ -14,4 +14,4 @@ workflows:
           path: .
           region: AWS_REGION
           repo: circleci-ecr-orb-demo-orchestrator
-          tage: '$CIRCLE_SHA1'
+          tag: '$CIRCLE_SHA1'
