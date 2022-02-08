@@ -8,7 +8,7 @@ workflows:
           account-url: AWS_ECR_ACCOUNT_URL # 284541392707.dkr.ecr.us-east-2.amazonaws.com, note that there is no http(s)
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          create-repo: true
+          create-repo: false
           dockerfile: Dockerfile
           no-output-timeout: 20m
           path: .
